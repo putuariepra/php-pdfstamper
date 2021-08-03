@@ -1,0 +1,17 @@
+{
+    "name": "putuariepra/php-pdfstamper",
+    "description": "Add an image to PDF's pages",    
+    "require": {
+        "php": ">=5.6.0"
+      },
+    "authors": [
+        {
+            "name": "putuariepra",
+            "email": "putuariepratama@gmail.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "autoload": {
+        "psr-4": {"PdfStamper\\": "/"}
+    }
+}
