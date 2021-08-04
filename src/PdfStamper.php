@@ -20,6 +20,20 @@ class PdfStamper {
   protected $pageRange = [];
   protected $pageExcepts = [];
 
+  protected $supportedImageFormat = [
+    'png' => 'image/png',
+    'jpe' => 'image/jpeg',
+    'jpeg' => 'image/jpeg',
+    'jpg' => 'image/jpeg',
+    'gif' => 'image/gif',
+    'bmp' => 'image/bmp',
+    'ico' => 'image/vnd.microsoft.icon',
+    'tiff' => 'image/tiff',
+    'tif' => 'image/tiff',
+    'svg' => 'image/svg+xml',
+    'svgz' => 'image/svg+xml',
+  ];
+
   function __construct($targetPdf, $imagePath, $outpurDir) {
     $this->dirLib = \dirname(__FILE__);
 
@@ -33,6 +47,22 @@ class PdfStamper {
   }  
 
   public function render() {
+    if (! \is_readable($this->targetPdf)) {
+      return $this->getOutput(false, 'PDF is not found nor readable');
+    }
+    if (! \is_readable($this->imagePath)) {
+      return $this->getOutput(false, 'Image is not found nor readable');
+    }
+    if (! \is_writable($this->outpurDir)) {
+      return $this->getOutput(false, 'Output folder is not found nor writeable');
+    }
+    if (\mime_content_type($this->targetPdf) != 'application/pdf') {
+      return $this->getOutput(false, 'Supported file format is only PDF');
+    }
+    if (! \in_array(\mime_content_type($this->imagePath), $this->supportedImageFormat)) {
+      return $this->getOutput(false, 'Image file format is not supported');
+    }
+
     $dpi = '';
     if (!is_null($this->dpi)) {
       $dpi = ' -d '.$dpi;
@@ -53,7 +83,16 @@ class PdfStamper {
     }
 
     $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl} -i '{$this->imagePath}' -l {$this->locX},{$this->locY} '{$this->targetPdf}' 2>&1";    
-    \exec($command, $val, $err);    
+
+    try {    
+      \exec($command, $val, $err);
+    } catch (\Exception $e) {      
+      return $this->getOutput(false, $e->getMessage());
+    }
+
+    if (!empty($val)) {      
+      return $this->getOutput(false, \implode(" ", $val));
+    }
 
     return $this->getOutput(true, 'Success', $outputPath);
   }  
