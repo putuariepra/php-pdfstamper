@@ -12,6 +12,6 @@
     ],
     "minimum-stability": "beta",
     "autoload": {
-        "psr-4": {"PdfStamper\\": "/"}
+        "psr-4": {"PdfStamper\\": "src/"}
     }
 }
