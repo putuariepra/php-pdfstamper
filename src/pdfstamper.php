@@ -1,4 +1,5 @@
 <?php
+namespace PdfStamper;
 
 class PdfStamper {
   private $dirLib;
