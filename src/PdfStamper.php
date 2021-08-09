@@ -121,7 +121,7 @@ class PdfStamper {
       $targetPdf = $this->fileName;
     }
 
-    $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl}{$outputCmd} -i '{$imagePath}' -l {$this->locX},{$this->locY} '{$targetPdf}' 2>&1";
+    $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl}{$outputCmd} -i {$imagePath} -l {$this->locX},{$this->locY} {$targetPdf} 2>&1";
 
     try {    
       \exec($command, $val, $err);
