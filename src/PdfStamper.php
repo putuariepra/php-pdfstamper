@@ -25,8 +25,7 @@ class PdfStamper {
   protected $dpi = null;
 
   protected $pageSingle = [];
-  protected $pageRange = [];
-  protected $pageExcepts = [];
+  protected $pageRange = [];  
 
   protected $supportedImageFormat = [
     'png' => 'image/png',
@@ -82,6 +81,11 @@ class PdfStamper {
       }
     }
 
+    $outputPath = $this->getOutputPath($outpurDir);
+    if (\file_exists($outputPath) && !$this->overwrite) {                  
+      return $this->getOutput(false, 'Stamped file already exists');      
+    }
+
     $dpi = '';
     if (!is_null($this->dpi)) {
       $dpi = ' -d '.$dpi;
@@ -95,11 +99,26 @@ class PdfStamper {
     $outputCmd = '';
     if (!is_null($this->outpurDir)) {
       $outputCmd = ' -o '.$this->outpurDir;
-    }
+    }    
 
-    $outputPath = $this->getOutputPath($outpurDir);
-    if (\file_exists($outputPath) && !$this->overwrite) {                  
-      return $this->getOutput(false, 'Stamped file already exists');      
+    $pageCmd = '';
+    if (count($this->pageSingle) > 0) {
+      foreach ($pageCmd as $value) {
+        if (!empty($value)) {
+          $pageCmd .= ' -p '.$value;
+        }
+      }
+    }
+    if (count($this->pageRange) > 0) {
+      foreach ($pageCmd as $value) {
+        if (!empty($value[0]) && !empty($value[1])) {
+          if ($value[0] > $value[1]) {            
+            $pageCmd .= ' -pp '.$value[1].'-'.$value[0];
+          }else {
+            $pageCmd .= ' -pp '.$value[0].'-'.$value[1];
+          }
+        }
+      }
     }
 
     /**
@@ -107,7 +126,7 @@ class PdfStamper {
      */
     if ($this->mode == 1) {
       $cwd = \getcwd();
-      $new_file = $cwd.'/'.$this->fileName;
+      $new_file = $cwd.'/'.$this->fileName.".".$this->fileExt;
       $image_filename = \basename($this->imagePath);
       $new_image = $cwd.'/'.$image_filename;
       if (!copy($this->targetPdf,$new_file)) {
@@ -118,10 +137,10 @@ class PdfStamper {
       }
 
       $imagePath = $image_filename;
-      $targetPdf = $this->fileName;
+      $targetPdf = $this->fileName.".".$this->fileExt;
     }
 
-    $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl}{$outputCmd} -i {$imagePath} -l {$this->locX},{$this->locY} {$targetPdf} 2>&1";
+    $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl}{$outputCmd}{$pageCmd} -i {$imagePath} -l {$this->locX},{$this->locY} {$targetPdf} 2>&1";
 
     try {    
       \exec($command, $val, $err);
@@ -155,12 +174,20 @@ class PdfStamper {
     return $this;
   }
 
+  public function setPage($pages = []) {
+    $this->pageSingle = $pages;
+  }
+
+  public function setPageRange($ranges = []) {
+    $this->pageRange = $ranges;
+  }
+
   public function overwrite() {
     $this->overwrite = 1;
     return $this;
   }
 
-  public function disableValidate() {
+  public function disableValidation() {
     $this->validate = 0;
     return $this;
   }
