@@ -59,25 +59,28 @@ class PdfStamper {
     $targetPdf = $this->targetPdf;
     $outpurDir = $this->outpurDir;
 
+    $mimeTargetPdf = \mime_content_type($this->targetPdf);
+    $mimeImage = \mime_content_type($this->imagePath);
+
     if (is_null($outpurDir)) {
       $outpurDir = $this->fileDir;
     }
 
     if ($this->validate) {      
       if (! \is_readable($this->targetPdf)) {
-        return $this->getOutput(false, 'PDF is not found nor readable');
+        return $this->getOutput(false, "PDF is not found nor readable. {$this->targetPdf}");
       }
       if (! \is_readable($this->imagePath)) {
-        return $this->getOutput(false, 'Image is not found nor readable');
+        return $this->getOutput(false, "Image is not found nor readable. {$this->imagePath}");
       }
       if (! \is_writable($outpurDir)) {
-        return $this->getOutput(false, "Output folder {$outpurDir} is not found nor writeable");
+        return $this->getOutput(false, "Output folder is not found nor writeable. {$outpurDir}");
       }
-      if (\mime_content_type($this->targetPdf) != 'application/pdf') {
-        return $this->getOutput(false, 'Supported file format is only PDF');
+      if ($mimeTargetPdf != 'application/pdf') {
+        return $this->getOutput(false, "Supported file format is only PDF. The file format is {$mimeTargetPdf}");
       }
-      if (! \in_array(\mime_content_type($this->imagePath), $this->supportedImageFormat)) {
-        return $this->getOutput(false, 'Image file format is not supported');
+      if (! \in_array($mimeImage, $this->supportedImageFormat)) {
+        return $this->getOutput(false, "Image file format is not supported. The image format is {$mimeImage}");
       }
     }
 
@@ -174,12 +177,18 @@ class PdfStamper {
     return $this;
   }
 
-  public function setPage($pages = []) {
-    $this->pageSingle = $pages;
+  public function setPage($pages) {
+    if (\is_array($pages)) {      
+      $this->pageSingle = $pages;
+    } else {
+      $this->pageSingle = [$pages];
+    }
+    return $this;
   }
 
   public function setPageRange($ranges = []) {
     $this->pageRange = $ranges;
+    return $this;
   }
 
   public function overwrite() {
