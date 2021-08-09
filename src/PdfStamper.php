@@ -160,8 +160,8 @@ class PdfStamper {
     return $this;
   }
 
-  public function validate() {
-    $this->validate = 1;
+  public function disableValidate() {
+    $this->validate = 0;
     return $this;
   }
 
