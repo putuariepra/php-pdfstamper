@@ -106,14 +106,14 @@ class PdfStamper {
 
     $pageCmd = '';
     if (count($this->pageSingle) > 0) {
-      foreach ($pageCmd as $value) {
+      foreach ($this->pageSingle as $value) {
         if (!empty($value)) {
           $pageCmd .= ' -p '.$value;
         }
       }
     }
     if (count($this->pageRange) > 0) {
-      foreach ($pageCmd as $value) {
+      foreach ($this->pageRange as $value) {
         if (!empty($value[0]) && !empty($value[1])) {
           if ($value[0] > $value[1]) {            
             $pageCmd .= ' -pp '.$value[1].'-'.$value[0];
