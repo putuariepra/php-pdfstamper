@@ -6,6 +6,8 @@ class PdfStamper {
   private $fileName;
   private $fileExt;
 
+  private $validate = 0;
+
   protected $targetPdf = null;
   protected $outpurDir = null;
   protected $overwrite = 0;
@@ -47,20 +49,22 @@ class PdfStamper {
   }  
 
   public function render() {
-    if (! \is_readable($this->targetPdf)) {
-      return $this->getOutput(false, 'PDF is not found nor readable');
-    }
-    if (! \is_readable($this->imagePath)) {
-      return $this->getOutput(false, 'Image is not found nor readable');
-    }
-    if (! \is_writable($this->outpurDir)) {
-      return $this->getOutput(false, 'Output folder is not found nor writeable');
-    }
-    if (\mime_content_type($this->targetPdf) != 'application/pdf') {
-      return $this->getOutput(false, 'Supported file format is only PDF');
-    }
-    if (! \in_array(\mime_content_type($this->imagePath), $this->supportedImageFormat)) {
-      return $this->getOutput(false, 'Image file format is not supported');
+    if ($this->validate) {      
+      if (! \is_readable($this->targetPdf)) {
+        return $this->getOutput(false, 'PDF is not found nor readable');
+      }
+      if (! \is_readable($this->imagePath)) {
+        return $this->getOutput(false, 'Image is not found nor readable');
+      }
+      if (! \is_writable($this->outpurDir)) {
+        return $this->getOutput(false, 'Output folder is not found nor writeable');
+      }
+      if (\mime_content_type($this->targetPdf) != 'application/pdf') {
+        return $this->getOutput(false, 'Supported file format is only PDF');
+      }
+      if (! \in_array(\mime_content_type($this->imagePath), $this->supportedImageFormat)) {
+        return $this->getOutput(false, 'Image file format is not supported');
+      }
     }
 
     $dpi = '';
@@ -113,6 +117,11 @@ class PdfStamper {
 
   public function overwrite() {
     $this->overwrite = 1;
+    return $this;
+  }
+
+  public function validate() {
+    $this->validate = 1;
     return $this;
   }
 
