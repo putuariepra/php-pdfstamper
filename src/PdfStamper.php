@@ -91,7 +91,7 @@ class PdfStamper {
 
     $dpi = '';
     if (!is_null($this->dpi)) {
-      $dpi = ' -d '.$dpi;
+      $dpi = ' -d '.$this->dpi;
     }
 
     $stampUrl = '';
