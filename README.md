@@ -12,7 +12,8 @@ This package using [crossref/pdfstamp](https://gitlab.com/crossref/pdfstamp)
 | overwrite() |  | Overwrite the stamped image if already exists. Default: false |
 | disableValidation() |  | Disable validation of PDF file (exists and must be pdf), image (exists and must be image format) and output directory (writeable) |
 
-# Examples
+Examples
+------------
 Standard usage
 
     use PdfStamper\PdfStamper;
@@ -81,5 +82,19 @@ Set pages using range (e.g: pages 1-3 and 6-8)
     ])
     ->render();
 
-# Credit
+Requirements
+------------
+- PHP: >=5.6.0
+- [JRE](https://www.java.com/)
+
+Installation
+------------
+> This package can be installed either in native PHP or Framework such Laravel
+
+Run composer require to install
+
+    composer require putuariepra/php-pdfstamper
+
+Credit
+------------
 - [crossref](https://gitlab.com/crossref)
