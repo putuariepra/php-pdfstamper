@@ -146,7 +146,7 @@ class PdfStamper {
     $command = "java -jar {$this->dirLib}/pdfstamp.jar{$dpi}{$stampUrl}{$outputCmd}{$pageCmd} -i {$imagePath} -l {$this->locX},{$this->locY} {$targetPdf} 2>&1";
 
     try {    
-      \exec($command, $val, $err);
+      \exec(\escapeshellcmd($command), $val, $err);
     } catch (\Exception $e) {      
       return $this->getOutput(false, $e->getMessage());
     }
